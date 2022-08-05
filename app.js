@@ -37,7 +37,7 @@ var financeController = (function () {
   };
 
   var data = {
-    allItems: {
+    items: {
       inc: [],
       exp: [],
     },
@@ -46,13 +46,38 @@ var financeController = (function () {
       exp: 0,
     },
   };
+
+  return {
+    addItem: function (type, desc, value) {
+      var item, id;
+
+      if (data.items[type].length === 0) id = 1;
+      else {
+        id = data.items[type][data.items[type].length - 1].id + 1;
+      }
+
+      if (type === "inc") {
+        item = new Income(id, desc, value);
+      } else {
+        item = new Expense(id, desc, value);
+      }
+
+      data.items[type].push(item);
+    },
+
+    seeData: function () {
+      return data;
+    },
+  };
 })();
 
 // --------- Программын холбогч контроллер ---------
 var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     //Оруулах өгөгдлийг дэлгэцээс олж авна.
-    console.log(uiController.getInput());
+    var input = uiController.getInput();
+
+    financeController.addItem(input.type, input.description, input.value);
     //Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
     //Олж авсан өгөгдлүүдээ вэбэд тохирох хэсэгт нь гаргана.
     //Төсвийг тооцоолно.
